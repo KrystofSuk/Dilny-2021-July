@@ -7,20 +7,20 @@
 ## TODO:
 
 ### Installs:
-* [ ] Unity 2020.3.13f1 LTS 
-* [ ] Photoshop 
-* [ ] VS 
-* [ ] Git 
+* [x] Unity 2020.3.13f1 LTS 
+* [x] Photoshop 
+* [x] VS 
+* [x] Git 
 * [ ] Screen Capture 
 * [ ] Games 
-* [ ] Background 
+* [x] Background 
 
 
 ### Miscs:
 * [ ] Voda 
 * [ ] Stavy 
 * [ ] Lednice 
-* [ ] VR 
+* [x] VR 
 * [ ] Monitory staff 
 * [ ] Redukce 
 
