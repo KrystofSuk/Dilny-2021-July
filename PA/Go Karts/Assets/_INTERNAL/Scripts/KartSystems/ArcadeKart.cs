@@ -331,7 +331,8 @@ namespace KartGame.KartSystems
             for (int i = 0; i < m_Inputs.Length; i++)
             {
                 Input = m_Inputs[i].GenerateInput();
-                WantsToDrift = Input.Brake && Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
+                //WantsToDrift = Input.Brake && Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
+                WantsToDrift = Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
             }
         }
 
