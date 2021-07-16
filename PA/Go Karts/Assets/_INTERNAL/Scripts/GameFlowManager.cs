@@ -68,7 +68,7 @@ public class GameFlowManager : MonoBehaviour
                 if (!playerKart) playerKart = karts[0];
             }
 
-            DebugUtility.HandleErrorIfNullFindObject<ArcadeKart GameFlowManager>(playerKart, this);
+            DebugUtility.HandleErrorIfNullFindObject<ArcadeKart, GameFlowManager>(playerKart, this);
         }
 
 
@@ -208,4 +208,4 @@ public class GameFlowManager : MonoBehaviour
             loseDisplayMessage.gameObject.SetActive(true);
         }
     }
-},
+}

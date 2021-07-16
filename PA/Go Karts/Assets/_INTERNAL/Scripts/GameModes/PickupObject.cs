@@ -33,7 +33,7 @@ public class PickupObject : TargetObject
             Destroy(vfx, destroySpawnPrefabDelay);
         }
                
-        Objective.OnUnregisterPickup(this);
+        Objective.OnUnregisterPickup(this, null);
 
         TimeManager.OnAdjustTime(TimeGained);
 

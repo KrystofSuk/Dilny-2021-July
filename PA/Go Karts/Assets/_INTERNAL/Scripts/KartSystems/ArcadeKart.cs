@@ -101,6 +101,9 @@ namespace KartGame.KartSystems
         public float AirborneReorientationCoefficient = 3.0f;
 
         [Header("Drifting")]
+        public bool brakeToDrift = false;
+        [Range(0.01f, 1.0f)]
+        public float driftTreshold = 0.3f;
         [Range(0.01f, 1.0f), Tooltip("The grip value when drifting.")]
         public float DriftGrip = 0.4f;
         [Range(0.0f, 10.0f), Tooltip("Additional steer when the kart is drifting.")]
@@ -332,7 +335,10 @@ namespace KartGame.KartSystems
             {
                 Input = m_Inputs[i].GenerateInput();
                 //WantsToDrift = Input.Brake && Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
-                WantsToDrift = Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
+                if (brakeToDrift)
+                    WantsToDrift = Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f && Input.Brake;
+                else
+                    WantsToDrift = Vector3.Dot(Rigidbody.velocity, transform.forward) > driftTreshold;
             }
         }
 

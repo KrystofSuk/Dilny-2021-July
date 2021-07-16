@@ -37,7 +37,7 @@ public abstract class Objective : MonoBehaviour
     [Header("Requirements")] [Tooltip("Does the objective have a time limit?")]
     public bool isTimed;
 
-    [ooltip("If there is a time limit, how long in secs?")]
+    [Tooltip("If there is a time limit, how long in secs?")]
     public int totalTimeInSecs;
 
     public bool isCompleted { get; protected set; }
