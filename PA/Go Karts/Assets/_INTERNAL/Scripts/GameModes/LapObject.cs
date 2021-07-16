@@ -1,21 +1,24 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using KartGame.KartSystems;
+using UnityEngine;
 
 /// <summary>
 /// This class inherits from TargetObject and represents a LapObject.
 /// </summary>
 public class LapObject : TargetObject
 {
-    [Header("LapObject")]
-    [Tooltip("Is this the first/last lap object?")]
+    [Header("LapObject")] [Tooltip("Is this the first/last lap object?")]
     public bool finishLap;
 
-    [HideInInspector]
-    public bool lapOverNextPass;
+    [HideInInspector] public bool lapOverNextPass;
 
-    void Start() {
+    public List<ArcadeKart> kartsPassed = new List<ArcadeKart>();
+
+    void Start()
+    {
         Register();
     }
-    
+
     void OnEnable()
     {
         lapOverNextPass = false;
@@ -25,7 +28,8 @@ public class LapObject : TargetObject
     {
         if (!((layerMask.value & 1 << other.gameObject.layer) > 0 && other.CompareTag("Player")))
             return;
-       
-        Objective.OnUnregisterPickup?.Invoke(this);
+
+        var kart = other.transform.parent.GetComponentInChildren<ArcadeKart>();
+        Objective.OnUnregisterPickup?.Invoke(this, kart);
     }
 }

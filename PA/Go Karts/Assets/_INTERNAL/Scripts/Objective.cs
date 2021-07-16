@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using KartGame.KartSystems;
 using KartGame.Track;
 using UnityEngine;
 using UnityEngine.Events;
 
 public enum GameMode
 {
-    TimeLimit, Crash, Laps
+    TimeLimit,
+    Crash,
+    Laps
 }
 
 public abstract class Objective : MonoBehaviour
@@ -34,8 +37,9 @@ public abstract class Objective : MonoBehaviour
     [Header("Requirements")] [Tooltip("Does the objective have a time limit?")]
     public bool isTimed;
 
-    [Tooltip("If there is a time limit, how long in secs?")]
+    [ooltip("If there is a time limit, how long in secs?")]
     public int totalTimeInSecs;
+
     public bool isCompleted { get; protected set; }
     public bool isBlocking() => !(isOptional || isCompleted);
 
@@ -43,10 +47,10 @@ public abstract class Objective : MonoBehaviour
 
     protected NotificationHUDManager m_NotificationHUDManager;
     protected ObjectiveHUDManger m_ObjectiveHUDManger;
-    
+
     public static Action<TargetObject> OnRegisterPickup;
-    public static Action<TargetObject> OnUnregisterPickup;
-    
+    public static Action<TargetObject, ArcadeKart> OnUnregisterPickup;
+
     public DisplayMessage displayMessage;
 
     private List<TargetObject> pickups = new List<TargetObject>();
@@ -54,7 +58,7 @@ public abstract class Objective : MonoBehaviour
     public List<TargetObject> Pickups => pickups;
     public int NumberOfPickupsTotal { get; private set; }
     public int NumberOfPickupsRemaining => Pickups.Count;
-    
+
     public int NumberOfActivePickupsRemaining()
     {
         int total = 0;
@@ -66,8 +70,30 @@ public abstract class Objective : MonoBehaviour
         return total;
     }
 
+    public bool KartPasssedAllCheckpoints(ArcadeKart kart)
+    {
+        foreach (var pickup in this.Pickups)
+        {
+            if (pickup is LapObject lapPickup)
+            {
+                if (!lapPickup.kartsPassed.Contains(kart))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void ClearKartPassedCheckpoints(ArcadeKart kart)
+    {
+        foreach (var pickup in this.Pickups)
+            if (pickup is LapObject lapPickup)
+                if (lapPickup.kartsPassed.Contains(kart))
+                    lapPickup.kartsPassed.Remove(kart);
+    }
+
     protected abstract void ReachCheckpoint(int remaining);
-    
+
     void OnEnable()
     {
         OnRegisterPickup += RegisterPickup;
@@ -110,7 +136,7 @@ public abstract class Objective : MonoBehaviour
     {
         return "";
     }
-    
+
     public void RegisterPickup(TargetObject pickup)
     {
         if (pickup.gameMode != gameMode) return;
@@ -120,32 +146,55 @@ public abstract class Objective : MonoBehaviour
         NumberOfPickupsTotal++;
     }
 
-    public void UnregisterPickup(TargetObject pickupCollected)
+
+    private bool firstLap = true;
+
+    public void UnregisterPickup(TargetObject pickupCollected, ArcadeKart kart)
     {
         if (pickupCollected.gameMode != gameMode) return;
 
         // removes the pickup from the list, so that we can keep track of how many are left on the map
         if (pickupCollected.gameMode == GameMode.Laps)
         {
-            pickupCollected.active = false;
+            // pickupCollected.active = false;
 
             LapObject lapObject = (LapObject) pickupCollected;
 
+            if (kart == null) return;
+
+            if (!lapObject.kartsPassed.Contains(kart))
+                lapObject.kartsPassed.Add(kart);
+
+
             if (!lapObject.finishLap) return;
 
-            if (!lapObject.lapOverNextPass)
+            if (kart == ObjectiveCompleteLaps.gamePlayerKart && firstLap)
             {
                 TimeDisplay.OnUpdateLap();
-                lapObject.lapOverNextPass = true;
-                return;
+                firstLap = false;
             }
 
-            if (NumberOfActivePickupsRemaining() != 0) return;
+            if (KartPasssedAllCheckpoints(kart))
+            {
+                ClearKartPassedCheckpoints(kart);
+                ObjectiveCompleteLaps.AddLap(kart);
 
-            ReachCheckpoint(0);
-            ResetPickups();
-            TimeDisplay.OnUpdateLap();
+                if (kart == ObjectiveCompleteLaps.gamePlayerKart)
+                    TimeDisplay.OnUpdateLap();
+            }
 
+            // if (!lapObject.lapOverNextPass)
+            // {
+            //     TimeDisplay.OnUpdateLap();
+            //     lapObject.lapOverNextPass = true;
+            //     return;
+            // }
+            //
+            // if (NumberOfActivePickupsRemaining() != 0) return;
+            //
+            // ReachCheckpoint(0);
+            // ResetPickups();
+            // TimeDisplay.OnUpdateLap();
         }
         else
         {
@@ -163,13 +212,12 @@ public abstract class Objective : MonoBehaviour
             Pickups[i].active = true;
         }
     }
-    
+
     void OnDisable()
     {
         OnRegisterPickup -= RegisterPickup;
         OnUnregisterPickup -= UnregisterPickup;
     }
-
 }
 
 public class UnityActionUpdateObjective
@@ -180,7 +228,8 @@ public class UnityActionUpdateObjective
     public bool isComplete;
     public string notificationText;
 
-    public UnityActionUpdateObjective(Objective objective, string descriptionText, string counterText, bool isComplete, string notificationText)
+    public UnityActionUpdateObjective(Objective objective, string descriptionText, string counterText, bool isComplete,
+        string notificationText)
     {
         this.objective = objective;
         this.descriptionText = descriptionText;

@@ -1,37 +1,46 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Playables;
 using KartGame.KartSystems;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
-public enum GameState{Play, Won, Lost}
+public enum GameState
+{
+    Play,
+    Won,
+    Lost
+}
 
 public class GameFlowManager : MonoBehaviour
 {
-    [Header("Parameters")]
-    [Tooltip("Duration of the fade-to-black at the end of the game")]
+    [Header("Parameters")] [Tooltip("Duration of the fade-to-black at the end of the game")]
     public float endSceneLoadDelay = 3f;
+
     [Tooltip("The canvas group of the fade-to-black screen")]
     public CanvasGroup endGameFadeCanvasGroup;
 
-    [Header("Win")]
-    [Tooltip("This string has to be the name of the scene you want to load when winning")]
+    [Header("Win")] [Tooltip("This string has to be the name of the scene you want to load when winning")]
     public string winSceneName = "WinScene";
+
     [Tooltip("Duration of delay before the fade-to-black, if winning")]
     public float delayBeforeFadeToBlack = 4f;
+
     [Tooltip("Duration of delay before the win message")]
     public float delayBeforeWinMessage = 2f;
-    [Tooltip("Sound played on win")]
-    public AudioClip victorySound;
+
+    [Tooltip("Sound played on win")] public AudioClip victorySound;
 
     [Tooltip("Prefab for the win game message")]
     public DisplayMessage winDisplayMessage;
 
     public PlayableDirector raceCountdownTrigger;
 
-    [Header("Lose")]
-    [Tooltip("This string has to be the name of the scene you want to load when losing")]
+    [Header("Lose")] [Tooltip("This string has to be the name of the scene you want to load when losing")]
     public string loseSceneName = "LoseScene";
+
     [Tooltip("Prefab for the lose game message")]
     public DisplayMessage loseDisplayMessage;
 
@@ -48,6 +57,7 @@ public class GameFlowManager : MonoBehaviour
     string m_SceneToLoad;
     float elapsedTimeBeforeEndScene = 0;
 
+
     void Start()
     {
         if (autoFindKarts)
@@ -57,11 +67,13 @@ public class GameFlowManager : MonoBehaviour
             {
                 if (!playerKart) playerKart = karts[0];
             }
-            DebugUtility.HandleErrorIfNullFindObject<ArcadeKart, GameFlowManager>(playerKart, this);
+
+            DebugUtility.HandleErrorIfNullFindObject<ArcadeKart GameFlowManager>(playerKart, this);
         }
 
+
         m_ObjectiveManager = FindObjectOfType<ObjectiveManager>();
-		DebugUtility.HandleErrorIfNullFindObject<ObjectiveManager, GameFlowManager>(m_ObjectiveManager, this);
+        DebugUtility.HandleErrorIfNullFindObject<ObjectiveManager, GameFlowManager>(m_ObjectiveManager, this);
 
         m_TimeManager = FindObjectOfType<TimeManager>();
         DebugUtility.HandleErrorIfNullFindObject<TimeManager, GameFlowManager>(m_TimeManager, this);
@@ -74,7 +86,7 @@ public class GameFlowManager : MonoBehaviour
         m_TimeManager.StopRace();
         foreach (ArcadeKart k in karts)
         {
-			k.SetCanMove(false);
+            k.SetCanMove(false);
         }
 
         //run race countdown animation
@@ -84,44 +96,48 @@ public class GameFlowManager : MonoBehaviour
         StartCoroutine(CountdownThenStartRaceRoutine());
     }
 
-    IEnumerator CountdownThenStartRaceRoutine() {
+    IEnumerator CountdownThenStartRaceRoutine()
+    {
         yield return new WaitForSeconds(3f);
         StartRace();
     }
 
-    void StartRace() {
+    void StartRace()
+    {
         foreach (ArcadeKart k in karts)
         {
-			k.SetCanMove(true);
+            k.SetCanMove(true);
         }
+
         m_TimeManager.StartRace();
     }
 
-    void ShowRaceCountdownAnimation() {
+    void ShowRaceCountdownAnimation()
+    {
         raceCountdownTrigger.Play();
     }
 
-    IEnumerator ShowObjectivesRoutine() {
+    IEnumerator ShowObjectivesRoutine()
+    {
         while (m_ObjectiveManager.Objectives.Count == 0)
             yield return null;
         yield return new WaitForSecondsRealtime(0.2f);
         for (int i = 0; i < m_ObjectiveManager.Objectives.Count; i++)
         {
-           if (m_ObjectiveManager.Objectives[i].displayMessage)m_ObjectiveManager.Objectives[i].displayMessage.Display();
-           yield return new WaitForSecondsRealtime(1f);
+            if (m_ObjectiveManager.Objectives[i].displayMessage)
+                m_ObjectiveManager.Objectives[i].displayMessage.Display();
+            yield return new WaitForSecondsRealtime(1f);
         }
     }
 
 
     void Update()
     {
-
         if (gameState != GameState.Play)
         {
             elapsedTimeBeforeEndScene += Time.deltaTime;
-            if(elapsedTimeBeforeEndScene >= endSceneLoadDelay)
+            if (elapsedTimeBeforeEndScene >= endSceneLoadDelay)
             {
-
                 float timeRatio = 1 - (m_TimeLoadEndGameScene - Time.time) / endSceneLoadDelay;
                 endGameFadeCanvasGroup.alpha = timeRatio;
 
@@ -139,11 +155,19 @@ public class GameFlowManager : MonoBehaviour
         }
         else
         {
-            if (m_ObjectiveManager.AreAllObjectivesCompleted())
-                EndGame(true);
+            // LAP SCRIPT
+            foreach (var kart in ObjectiveCompleteLaps.kartsScore.Keys)
+                if (ObjectiveCompleteLaps.KartWon(kart))
+                {
+                    // Debug.Log("PLAYER LOST");
+                    EndGame(this.playerKart == kart);
+                }
 
-            if (m_TimeManager.IsFinite && m_TimeManager.IsOver)
-                EndGame(false);
+            // if (m_ObjectiveManager.AreAllObjectivesCompleted())
+            //     EndGame(true);
+            //
+            // if (m_TimeManager.IsFinite && m_TimeManager.IsOver)
+            //     EndGame(false);
         }
     }
 
@@ -184,4 +208,4 @@ public class GameFlowManager : MonoBehaviour
             loseDisplayMessage.gameObject.SetActive(true);
         }
     }
-}
+},
