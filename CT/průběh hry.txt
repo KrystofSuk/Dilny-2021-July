@@ -1,0 +1,8 @@
+1. určení prvního hráče
+
+2. líznutí dvou karet itemů
+3. pohyb
+poté co provedou všichni hráči
+4. sázení (pokud se bude bojovat)
+5. boj (pokud jsou dva hráči v aréně)
+opakujte dokud hra neskončí

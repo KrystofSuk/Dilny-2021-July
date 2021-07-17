@@ -1,0 +1,85 @@
+VLÁDCI GLADIÁTORŮ
+
+
+
+Pravidla 
+
+
+Hra
+
+Hra je pro dva a více hráčů.
+Na začátku hry si každý hráč vezme jednu kartu gladiátora a 5 karet itemů.
+
+Boj
+
+
+Vždy bojují 2 hráči.
+Před bojem si každý sestavý karty.
+Do boje se dostanete stoupnutím na políčko vstupu do arény. (když jste v aréně nehážete na pohyb čekáte na druhého hráče)
+Boj začíná když jsou v aréně dva hráči.
+Kdo na kostce hodí větší číslo začíná vykládat itemy. 
+Na začtku boje oba vyloží jednoho svého gladirátora.
+Po začátku boje se hráči střídaji ve vykládání itemů, než někdo vyhraje/prohraje.
+Po skončení boje se všechny karty itemů vyhazují na odhazovací balíček.
+Poražený hráš ztrácí svého gladiátora.
+
+
+Sázení
+
+Hráči přihlížející boji vždy vsázejí minimálně 1 coin.
+Každý hráč který přihlýží boji musí vsadit na jednoho z gladiátorů.
+Bojující hráči nesmí sázet.
+Když vsadíte na výherce vrátí se vám vaše vsazené coiny zpátky.
+Když vsadíte na poraženého vaší sázku získá výherce boje. 
+Výherce získává sázky ode všech co vsadili na poraženého a polovinu na sebe vsazených coinů od poraženého (pokuď je číslo liché hráč odevzdává menší polovinu).
+Poražený odevzdává výhercovy polovinu coinů které na něj byli vsazeny (pokuď je číslo liché hráč odevzdává menší polovinu).
+
+
+Karty
+
+Karta gladiátora se dá získat, pouze tím že stoupnete na políčko gladiátora.
+Karta itemu se dá získat stoupnutím na políčko itemu, za každý vsazený coin který se vám vrátí a na začatku kola si vždy berete 2 karty itemů.
+
+
+pohyb
+
+Posuňte se o tolik políček kolik jste hodili na kostce.
+Když stoupnete na políčko s akcí okamžitě proveďte danou akci.
+	akce:
+	lízňete si kartu gladiátora
+	lízněte si kartu itemu
+	vyhoďte kartu itemu
+
+
+konec hry
+
+Hra končí ihned potom co zůstane pouze jeden poslední hráč.
+Vyhrává ten, kdo má na konci minimálně jednoho gladiátora a je jediný zbývající hráč.
+Ihned po té co vám zemřou všichni gladiátoři v ruce jste vyřazen.
+Jakmile budete vyřazen musíte odevzdat všechny karty do příslušného odhazovacího balíčku a všechny coiny do banky.
+
+
+
+
+
+
+
+pořadí částí hry
+
+1. určení prvního hráče
+
+2. líznutí dvou karet itemů
+3. pohyb
+poté co provedou všichni hráči
+4. sázení (pokud se bude bojovat)
+5. boj (pokud jsou dva hráči v aréně)
+opakujte dokud hra neskončí
+
+
+
+
+
+
+
+seznam věcí
+
