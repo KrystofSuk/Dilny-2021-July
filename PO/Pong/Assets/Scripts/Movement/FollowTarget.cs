@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 using System.Collections;
 
 [AddComponentMenu("Playground/Movement/Follow Target")]
@@ -17,22 +18,26 @@ public class FollowTarget : Physics2DObject
 
 	// The direction that will face the target
 	public Enums.Directions useSide = Enums.Directions.Up;
-	
+
 	// FixedUpdate is called once per frame
-	void FixedUpdate ()
+	void FixedUpdate()
 	{
 		//do nothing if the target hasn't been assigned or it was detroyed for some reason
-		if(target == null)
-			return;
+		if (target == null)
+		{
+			target = GameObject.FindGameObjectsWithTag("Bullet")?.FirstOrDefault()?.transform;
+			if (target == null) return;
+		}
 
 		//look towards the target
-		if(lookAtTarget)
+		if (lookAtTarget)
 		{
-			Utils.SetAxisTowards(useSide, transform, target.position - transform.position);
+			//Utils.SetAxisTowards(useSide, transform, target.position - transform.position);
 		}
-		
+
 		//Move towards the target
 		rigidbody2D.MovePosition(Vector2.Lerp(transform.position, target.position, Time.fixedDeltaTime * speed));
-
+		//rigidbody2D.AddForce(new Vector2(this.transform.position.x, transform.position.y - target.position.y), ForceMode2D.Impulse);
+		//Debug.Log(transform.position.y - target.position.y);
 	}
 }

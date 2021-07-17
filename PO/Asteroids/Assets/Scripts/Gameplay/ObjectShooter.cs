@@ -73,6 +73,39 @@ public class ObjectShooter : MonoBehaviour
 		}
 	}
 
+	public void SHoot()
+    {
+
+		if (Time.time >= timeOfLastSpawn + creationRate)
+		{
+			Vector2 actualBulletDirection = (relativeToRotation) ? (Vector2)(Quaternion.Euler(0, 0, transform.eulerAngles.z) * shootDirection) : shootDirection;
+
+			GameObject newObject = Instantiate<GameObject>(prefabToSpawn);
+			newObject.transform.position = this.transform.position;
+			newObject.transform.eulerAngles = new Vector3(0f, 0f, Utils.Angle(actualBulletDirection));
+			newObject.tag = "Bullet";
+
+			// push the created objects, but only if they have a Rigidbody2D
+			Rigidbody2D rigidbody2D = newObject.GetComponent<Rigidbody2D>();
+			if (rigidbody2D != null)
+			{
+				rigidbody2D.AddForce(actualBulletDirection * shootSpeed, ForceMode2D.Impulse);
+			}
+
+			// add a Bullet component if the prefab doesn't already have one, and assign the player ID
+			BulletAttribute b = newObject.GetComponent<BulletAttribute>();
+			if (b == null)
+			{
+				b = newObject.AddComponent<BulletAttribute>();
+			}
+			b.playerId = playerNumber;
+
+
+
+			timeOfLastSpawn = Time.time;
+		}
+	}
+
 	void OnDrawGizmosSelected()
 	{
 		if(this.enabled)
