@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;  
 using System.Collections;
 
 [AddComponentMenu("Playground/Movement/Camera Follow")]
@@ -28,10 +29,16 @@ public class CameraFollow : MonoBehaviour
 	{
 		if(target != null)
 		{
+            
+
 			// Find the right position between the camera and the object
 			lerpedPosition = Vector3.Lerp(transform.position, target.position, Time.deltaTime * 10f);
 			lerpedPosition.z = -10f;
 		}
+        else
+        {
+            target = GameObject.FindGameObjectsWithTag("Player").First()?.transform;
+        }
 	}
 
 
